@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5 col-lg-4 fade-in-up">
+        <div class="card glass-card">
+            <div class="card-header border-0 pb-0 pt-4 text-center">
+                <div class="d-inline-block bg-success bg-opacity-25 rounded-circle p-3 mb-3">
+                    <i class="fa-solid fa-user-lock fs-2 text-success"></i>
+                </div>
+                <h3 class="mb-0 fw-bold">Welcome Back</h3>
+                <p class="text-light mt-1" style="opacity: 0.7;">Login to your account</p>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="">
+                    <div class="mb-4">
+                        <label for="username" class="form-label ms-1" style="color: var(--primary);">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-user text-success"></i></span>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label ms-1" style="color: var(--primary);">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-lock text-success"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-custom w-100 py-2 mt-2">Login <i class="fa-solid fa-sign-in-alt ms-2"></i></button>
+                </form>
+                <div class="mt-4 text-center border-top border-secondary pt-3">
+                    <p class="mb-0" style="color: var(--primary); opacity: 0.9;">Don't have an account? <a href="{{ url_for('register') }}" style="color: white; font-weight: 600; text-decoration: none;">Register here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

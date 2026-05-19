@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 fade-in-up">
+    <div class="mb-3 mb-md-0">
+        <h2 class="fw-bold m-0"><i class="fa-solid fa-chart-line me-2 text-success"></i>Dashboard</h2>
+        <p class="text-light m-0" style="opacity: 0.7;">Overview of all reported waste</p>
+    </div>
+    <a href="{{ url_for('report_waste') }}" class="btn btn-custom"><i class="fa-solid fa-plus me-2"></i>Report Waste</a>
+</div>
+
+{% if current_user.is_admin %}
+    <div class="alert glass-card text-light fade-in-up delay-1 mb-4 border-0 shadow-sm" style="border-left: 4px solid var(--primary) !important;">
+        <i class="fa-solid fa-shield-halved me-2 text-success"></i> You are logged in as an <strong>Administrator</strong>. You can view all reports and update their statuses.
+    </div>
+{% endif %}
+
+<!-- Stats Cards -->
+<div class="row mb-5 fade-in-up delay-1">
+    <div class="col-md-4 mb-3">
+        <div class="card glass-card text-center p-3 border-0" style="border-bottom: 4px solid var(--primary) !important;">
+            <h1 class="display-4 fw-bold mb-0" style="color: var(--primary);">{{ total }}</h1>
+            <p class="text-uppercase text-light mb-0 fw-bold" style="letter-spacing: 1px; opacity: 0.9;">Total Reports</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card glass-card text-center p-3 border-0" style="border-bottom: 4px solid #ffc107 !important;">
+            <h1 class="display-4 fw-bold mb-0" style="color: #ffc107;">{{ pending }}</h1>
+            <p class="text-uppercase text-light mb-0 fw-bold" style="letter-spacing: 1px; opacity: 0.9;">Pending</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card glass-card text-center p-3 border-0" style="border-bottom: 4px solid #0dcaf0 !important;">
+            <h1 class="display-4 fw-bold mb-0" style="color: #0dcaf0;">{{ collected }}</h1>
+            <p class="text-uppercase text-light mb-0 fw-bold" style="letter-spacing: 1px; opacity: 0.9;">Collected</p>
+        </div>
+    </div>
+</div>
+
+<!-- Weekly Target Tracker -->
+<div class="row mb-5 fade-in-up delay-1">
+    <div class="col-12">
+        <div class="card glass-card p-4 border-0" style="border-left: 4px solid var(--primary) !important;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold m-0" style="color: var(--primary);"><i class="fa-solid fa-bullseye me-2"></i>Weekly Collection Target</h5>
+                <span class="text-light fw-bold fs-5">{{ weekly_collected }} / {{ weekly_target }}</span>
+            </div>
+            <div class="progress" style="height: 25px; background-color: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <div class="progress-bar progress-bar-striped progress-bar-animated text-dark fw-bold fs-6" role="progressbar" 
+                     style="width: {{ target_progress }}%; background-color: var(--primary);" 
+                     aria-valuenow="{{ target_progress }}" aria-valuemin="0" aria-valuemax="100">
+                    {% if target_progress > 5 %}{{ target_progress }}%{% endif %}
+                </div>
+            </div>
+            <p class="text-light mt-3 mb-0" style="opacity: 0.85; font-size: 0.95rem;">
+                {% if target_progress >= 100 %}
+                    <i class="fa-solid fa-trophy text-warning me-1 fs-5"></i> Amazing job! You've reached the weekly target!
+                {% else %}
+                    Keep it up! Just <strong class="text-white">{{ weekly_target - weekly_collected }}</strong> more collections needed to hit the target this week.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for report in reports %}
+    <div class="col-md-6 col-lg-4 mb-4 fade-in-up" style="animation-delay: {{ loop.index0 * 0.1 + 0.2 }}s;">
+        <div class="card h-100 glass-card p-0 overflow-hidden">
+            {% if report.image_file and report.image_file != 'default.jpg' %}
+                <img src="{{ url_for('static', filename='uploads/' + report.image_file) }}" class="card-img-top" alt="Waste Image" style="height: 200px; object-fit: cover;">
+            {% endif %}
+            <div class="card-header d-flex justify-content-between align-items-center pt-3 pb-2 border-0 mt-1">
+                <strong class="fs-5" style="color: var(--primary);">{{ report.waste_type }}</strong>
+                {% if report.status == 'Pending' %}
+                    <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="fa-regular fa-clock me-1"></i>{{ report.status }}</span>
+                {% elif report.status == 'Collected' %}
+                    <span class="badge bg-success rounded-pill px-3 py-2"><i class="fa-solid fa-check me-1"></i>{{ report.status }}</span>
+                {% elif report.status == 'In Progress' %}
+                    <span class="badge bg-info text-dark rounded-pill px-3 py-2"><i class="fa-solid fa-truck-fast me-1"></i>{{ report.status }}</span>
+                {% else %}
+                    <span class="badge bg-secondary rounded-pill px-3 py-2">{{ report.status }}</span>
+                {% endif %}
+            </div>
+            <div class="card-body pt-2">
+                <div class="mb-3 d-flex align-items-center">
+                    <span class="badge bg-dark border border-secondary text-light">Priority: 
+                        <span class="{% if report.priority == 'Critical' %}text-danger{% elif report.priority == 'High' %}text-warning{% elif report.priority == 'Low' %}text-info{% else %}text-success{% endif %}">
+                            {{ report.priority }}
+                        </span>
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <p class="card-text mb-1"><i class="fa-solid fa-location-dot me-2" style="color: var(--primary);"></i> <strong style="color: var(--primary);">Location</strong></p>
+                    <p class="ms-4 text-white fs-5 fw-medium">{{ report.location }}</p>
+                </div>
+                <div class="mb-2">
+                    <p class="card-text mb-1"><i class="fa-solid fa-align-left me-2" style="color: var(--primary);"></i> <strong style="color: var(--primary);">Description</strong></p>
+                    <p class="ms-4 text-white" style="font-size: 1.05rem; min-height: 48px;">{{ report.description or 'No description provided.' }}</p>
+                </div>
+                
+                <hr style="border-color: var(--glass-border);">
+                <div class="d-flex justify-content-between align-items-center text-light" style="opacity: 0.7; font-size: 0.85rem;">
+                    <span><i class="fa-regular fa-calendar me-1"></i> {{ report.date_reported.strftime('%Y-%m-%d %H:%M') }}</span>
+                    <span><i class="fa-solid fa-user me-1"></i> {{ report.author.username }}</span>
+                </div>
+            </div>
+            {% if current_user.is_admin %}
+            <div class="card-footer pb-3 pt-0 border-0">
+                <form action="{{ url_for('update_status', report_id=report.id) }}" method="POST" class="d-flex mt-2 bg-dark bg-opacity-25 p-2 rounded">
+                    <select name="status" class="form-select form-select-sm me-2 border-0">
+                        <option value="Pending" style="color: black;" {% if report.status == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="In Progress" style="color: black;" {% if report.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                        <option value="Collected" style="color: black;" {% if report.status == 'Collected' %}selected{% endif %}>Collected</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-outline-custom px-3">Update</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 fade-in-up delay-2">
+        <div class="card glass-card text-center p-5 border-0">
+            <i class="fa-solid fa-box-open text-success opacity-50 mb-4" style="font-size: 4rem; animation: floatEarth 4s ease-in-out infinite;"></i>
+            <h4 class="fw-bold">No waste reports found</h4>
+            {% if not current_user.is_admin %}
+                <p class="mb-0 text-light mt-2" style="opacity: 0.8;">Help out by <a href="{{ url_for('report_waste') }}" style="color: var(--primary); font-weight: 600;">reporting some waste here</a>.</p>
+            {% else %}
+                <p class="mb-0 text-light mt-2" style="opacity: 0.8;">The dashboard is all clear!</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

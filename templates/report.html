@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7 fade-in-up">
+        <div class="card glass-card">
+            <div class="card-header border-0 pb-0 pt-4 px-4 d-flex align-items-center">
+                <div class="bg-success bg-opacity-25 rounded p-2 me-3">
+                    <i class="fa-solid fa-recycle fs-3 text-success"></i>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold">Report Waste</h3>
+                    <p class="text-light mb-0" style="opacity: 0.7;">Fill out the details to report a waste issue</p>
+                </div>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <form method="POST" action="" enctype="multipart/form-data">
+                    <div class="mb-4">
+                        <label for="location" class="form-label fw-semibold ms-1" style="color: var(--primary);"><i class="fa-solid fa-location-dot me-2" style="color: var(--primary);"></i>Location (Address or Coordinates)</label>
+                        <input type="text" class="form-control form-control-lg" id="location" name="location" placeholder="e.g., 123 Main St, New York" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="waste_type" class="form-label fw-semibold ms-1" style="color: var(--primary);"><i class="fa-solid fa-tags me-2" style="color: var(--primary);"></i>Type of Waste</label>
+                            <select class="form-select form-select-lg" id="waste_type" name="waste_type" required>
+                                <option value="" style="color: black;">Select Waste Type...</option>
+                                <option value="General" style="color: black;">General / Mixed</option>
+                                <option value="Recyclable" style="color: black;">Recyclable (Plastic, Paper, Glass)</option>
+                                <option value="Organic" style="color: black;">Organic / Food Waste</option>
+                                <option value="Hazardous" style="color: black;">Hazardous (Chemicals, Batteries)</option>
+                                <option value="Electronic" style="color: black;">Electronic (e-waste)</option>
+                                <option value="Bulky" style="color: black;">Bulky (Furniture, Appliances)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="priority" class="form-label fw-semibold ms-1" style="color: var(--primary);"><i class="fa-solid fa-triangle-exclamation me-2" style="color: var(--primary);"></i>Priority</label>
+                            <select class="form-select form-select-lg" id="priority" name="priority" required>
+                                <option value="Low" style="color: black;">Low</option>
+                                <option value="Medium" style="color: black;" selected>Medium</option>
+                                <option value="High" style="color: black;">High</option>
+                                <option value="Critical" style="color: black;">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="waste_image" class="form-label fw-semibold ms-1" style="color: var(--primary);"><i class="fa-solid fa-camera me-2" style="color: var(--primary);"></i>Upload Photo (Optional)</label>
+                        <input class="form-control form-control-lg" type="file" id="waste_image" name="waste_image" accept="image/*">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label fw-semibold ms-1" style="color: var(--primary);"><i class="fa-solid fa-align-left me-2" style="color: var(--primary);"></i>Description / Additional Notes</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" placeholder="Provide details about the volume, specific location, or any hazards..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-custom btn-lg w-100 mt-2">Submit Report <i class="fa-solid fa-paper-plane ms-2"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
